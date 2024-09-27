@@ -8,22 +8,14 @@ document.getElementById("getText").addEventListener("click", function() {
     });
 });
 
-document.getElementById("fetchDB").addEventListener("click", function() {
-    // Connect to remote database and fetch some data
-    fetchFromDatabase();
-});
-
-// Function to extract text from the current page
-function extractText() {
-    let bodyText = document.body.innerText;
-    alert(bodyText);  // Replace this with your handling logic
-}
-
-// Function to fetch from a remote database
 function fetchFromDatabase() {
-    // Replace this URL with your actual database endpoint
-    fetch('https://your-database-endpoint.com/api/data')
+    fetch('C:/xampp/htdocs/ai-answer/fetch_data.php')  // URL to your PHP script
         .then(response => response.json())
-        .then(data => alert(JSON.stringify(data)))
+        .then(data => {
+            console.log(data);  // Handle the fetched data
+            alert(JSON.stringify(data));
+        })
         .catch(error => console.error('Error fetching data:', error));
 }
+
+
