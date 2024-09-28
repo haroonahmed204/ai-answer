@@ -92,6 +92,7 @@ function fillForm() {
     last_name: "Ahmed",
     email: "haroon@example.com",
     phone: "1234567890",
+    company: "ABC",
     city: "new york",
     state: "New york",
     state_ABv: "NY",
@@ -102,6 +103,8 @@ function fillForm() {
     Address: "2393 Creekside Drive, Coplay, Pennsylvania, USA, 18037",
     password: "SecurePassword123!",
     LinkedIn_url: "www.linkedin.com",
+    cnic_number: "12345-6789101-1",
+    date_of_birth: "09-28-2024",
     pronouns: "He/him",
     authorization: "Yes",
     sponsorship: "No",
@@ -141,19 +144,25 @@ function fillForm() {
 
   // set email
   setInputValue(
-    'input[type="email"][name="email"]',
+    'input[type="email"][name="email"], input[type="text"][autocomplete="email"]', 
     defaults.email
   );
 
   // set phone
   setInputValue(
-    'input[type="tel"][name="phone"], input[type="text"][name="phone"]',
+    'input[type="text"][name="phone"], input[type="text"][autocomplete="tel"],input[type="tel"][name="phone"]',
     defaults.phone
+  );
+
+  // set company
+  setInputValue(
+    'input[type="text"][name="org"]',
+    defaults.company
   );
 
   // set location
   setInputValue(
-    'input[type="text"][name="location"]',
+    'input[type="text"][name="location"], input[type="text"][name="job_application[location]"]',
     defaults.location
   );
 
@@ -168,6 +177,19 @@ function fillForm() {
     'input[type="password"][name="password"]',
     defaults.password
   );
+
+  // set CNIC Number
+  setInputValue(
+    'input[type="text"][autocomplete="custom-question-cnic-number"]',
+    defaults.cnic_number
+  );
+
+  // set date_of_birth
+  setInputValue(
+    'input[type="text"][autocomplete="custom-question-date-of-birth"]',
+    defaults.date_of_birth
+  );
+
 }
 
 function fetchDataFromDatabase() {
