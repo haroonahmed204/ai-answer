@@ -2,8 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    width: 412px;
-    height: 600px;
+    width: 350px;
     overflow: hidden;
 }
 
@@ -68,15 +67,16 @@ main {
     background-color: #cdc1ff;
     color: #fff;
     box-sizing: border-box;
-    height: 550px;
     overflow: hidden;
     padding: 10px;
 }
 
-main p {
-    margin: 0;
-    text-align: justify;
+#userForm { 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
+
 textarea {
     resize: none;
   }
