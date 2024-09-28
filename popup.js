@@ -60,13 +60,17 @@ function loadAllUsers() {
 
 // Function to attach event listeners
 function attachEventListeners() {
+  let getTextBtn = document.getElementById("getText");
+  let autoFillBtn = document.getElementById("autoFill");
+
   // get text button
-  document.getElementById("getText").addEventListener("click", function () {
+  
+  getTextBtn.addEventListener("click", function () {
     console.log("Fetch text button clicked");
   });
 
   // fetch autoFill button
-  document.getElementById("autoFill").addEventListener("click", () => {
+  autoFillBtn.addEventListener("click", () => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       let activeTabId = tabs[0].id;
 
@@ -81,11 +85,32 @@ function attachEventListeners() {
 
 function fillForm() {
   var defaults = {
-    name: "Haroon",
+    name: "Haroon Ahmed",
+    full_name: "Haroon Ahmed",
+    preferred_name: "Haroon Ahmed",
+    first_name: "Haroon",
+    last_name: "Ahmed",
     email: "haroon@example.com",
     phone: "1234567890",
-    location: "Current City",
+    city: "new york",
+    state: "New york",
+    state_ABv: "NY",
+    zipcode: "10325",
+    country: "United states",
+    country_ABV: "USA",
+    location: "New york, NY, USA",
+    Address: "2393 Creekside Drive, Coplay, Pennsylvania, USA, 18037",
     password: "SecurePassword123!",
+    LinkedIn_url: "www.linkedin.com",
+    pronouns: "He/him",
+    authorization: "Yes",
+    sponsorship: "No",
+    gender: "male",
+    Are_you_Hispanic_or_Latino: "No",
+    race: "asian",
+    veteran_status: "No",
+    diability: "no",
+    How_did_you_hear_about_us: "Linkedin",
   };
 
   function setInputValue(selector, value) {
@@ -96,24 +121,51 @@ function fillForm() {
     }
   }
 
+  // set full name
   setInputValue(
-    'input[type="text"][name="name"], input[type="text"][placeholder*="name"], input[data-qa*="name"]',
-    defaults.name
+    'input[type="text"][name="name"]',
+    defaults.full_name
   );
+
+  // set first name
   setInputValue(
-    'input[type="email"], input[name="email"], input[placeholder*="email"]',
+    'input[type="text"][name="firstname"], input[type=text][name="job_application[first_name]"]',
+    defaults.first_name
+  );
+
+  // set last name
+  setInputValue(
+    'input[type="text"][name="lastname"], input[type=text][name="job_application[last_name]"',
+    defaults.last_name
+  );
+
+  // set email
+  setInputValue(
+    'input[type="email"][name="email"]',
     defaults.email
   );
+
+  // set phone
   setInputValue(
-    'input[type="tel"], input[name="phone"], input[placeholder*="phone"]',
+    'input[type="tel"][name="phone"], input[type="text"][name="phone"]',
     defaults.phone
   );
+
+  // set location
   setInputValue(
-    'input[type="text"][name="location"], input[placeholder*="location"]',
+    'input[type="text"][name="location"]',
     defaults.location
   );
+
+  // set linkedin url
   setInputValue(
-    'input[type="password"], input[name="password"], input[placeholder*="password"]',
+    'input[type="text"][name="urls[LinkedIn]"], input[autocomplete="custom-question-linkedin-profile"]',
+    defaults.LinkedIn_url
+  );
+
+  // set password
+  setInputValue(
+    'input[type="password"][name="password"]',
     defaults.password
   );
 }
