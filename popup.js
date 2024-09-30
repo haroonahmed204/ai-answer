@@ -142,7 +142,7 @@ function fillForm() {
 
   // set full name
   setInputValue(
-    'input[type="text"][name="name"], input[type="text"][data-automation-id="legalNameSection_fullName"]',
+    'input[type="text"][name="name"], input[type="text"][data-automation-id="legalNameSection_fullName"], input[type="text"][name="_systemfield_name"]',
     defaults.full_name
   );
 
@@ -166,7 +166,7 @@ function fillForm() {
 
   // set email
   setInputValue(
-    'input[type="email"][name="email"], input[type="text"][autocomplete="email"], input[aria-label="Email"], input[name="vO84ELKo1D"]',
+    'input[type="email"][name="email"], input[type="text"][autocomplete="email"], input[aria-label="Email"], input[name="vO84ELKo1D"], input[type="email"][name="_systemfield_email"]',
     defaults.email
   );
 
@@ -204,7 +204,7 @@ function fillForm() {
 
   // set linkedin url
   setInputValue(
-    'input[type="text"][name="urls[LinkedIn]"], input[autocomplete="custom-question-linkedin-profile"], input[type="text"][data-automation-id="linkedinQuestion"], input[aria-label="LinkedIn Profile"], input[type="text"][name="linkedinUrl"], input[name="NQLvK1Rt9V"]',
+    'input[type="text"][name="urls[LinkedIn]"], input[autocomplete="custom-question-linkedin-profile"], input[type="text"][data-automation-id="linkedinQuestion"], input[aria-label="LinkedIn Profile"], input[type="text"][name="linkedinUrl"], input[name="NQLvK1Rt9V"], input[type="text"][name="34238dbf-b35d-4302-9d78-bb1145ebafd9"]',
     defaults.LinkedIn_url
   );
 
