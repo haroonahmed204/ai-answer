@@ -148,7 +148,7 @@ function fillForm() {
 
   // set first name
   setInputValue(
-    'input[type="text"][name="firstname"], input[type=text][name="job_application[first_name]"], input[type="text"][data-automation-id="legalNameSection_firstName"], input[aria-label="First Name"], input[name="firstName"], input[name="orV2-uLNL"]',
+    'input[type="text"][name="firstname"], input[type=text][name="job_application[first_name]"], input[type="text"][data-automation-id="legalNameSection_firstName"], input[aria-label="First Name"], input[name="firstName"], input[name="orV2-uLNL"], input[name="lxM5Vy11s"]',
     defaults.first_name
   );
 
@@ -160,13 +160,13 @@ function fillForm() {
 
   // set last name
   setInputValue(
-    'input[type="text"][name="lastname"], input[type=text][name="job_application[last_name]"], input[type="text"][data-automation-id="legalNameSection_lastName"], input[aria-label="Last Name"], input[name="lastName"], input[name="GTdQz2MZO3"]',
+    'input[type="text"][name="lastname"], input[type=text][name="job_application[last_name]"], input[type="text"][data-automation-id="legalNameSection_lastName"], input[aria-label="Last Name"], input[name="lastName"], input[name="GTdQz2MZO3"], input[name="uBdtFTtnml"]',
     defaults.last_name
   );
 
   // set email
   setInputValue(
-    'input[type="email"][name="email"], input[type="text"][autocomplete="email"], input[aria-label="Email"]',
+    'input[type="email"][name="email"], input[type="text"][autocomplete="email"], input[aria-label="Email"], input[name="vO84ELKo1D"]',
     defaults.email
   );
 
@@ -174,13 +174,13 @@ function fillForm() {
 
   // set phone
   setInputValue(
-    'input[type="text"][name="phone"], input[type="text"][autocomplete="tel"],input[type="tel"][name="phone"], input[type="text"][data-automation-id="phone-number"], input[aria-label="Phone"], input[name="phoneNumber"]',
+    'input[type="text"][name="phone"], input[type="text"][autocomplete="tel"],input[type="tel"][name="phone"], input[type="text"][data-automation-id="phone-number"], input[aria-label="Phone"], input[name="phoneNumber"], input[name="jVE7d2VWz8"]',
     defaults.phone
   );
 
   // set company
   setInputValue(
-    'input[type="text"][name="org"], input[type="text"][data-automation-id="company"], input[aria-label="Where have you most recently worked?"]',
+    'input[type="text"][name="org"], input[type="text"][data-automation-id="company"], input[aria-label="Where have you most recently worked?"], input[name="J05B4qc7Lw"]',
     defaults.company
   );
 
@@ -198,19 +198,19 @@ function fillForm() {
 
   // set location
   setInputValue(
-    'input[type="text"][name="location"], input[type="text"][name="job_application[location]"], input[aria-label="Location"], input[name="q_cdf62a768c632854841cfa5e558cfe3c"], input[type="text"][name="address"]',
+    'input[type="text"][name="location"], input[type="text"][name="job_application[location]"], input[aria-label="Location"], input[name="q_cdf62a768c632854841cfa5e558cfe3c"], input[type="text"][name="address"], input[name="4O1zB1L7tr"]',
     defaults.location
   );
 
   // set linkedin url
   setInputValue(
-    'input[type="text"][name="urls[LinkedIn]"], input[autocomplete="custom-question-linkedin-profile"], input[type="text"][data-automation-id="linkedinQuestion"], input[aria-label="LinkedIn Profile"], input[type="text"][name="linkedinUrl"]',
+    'input[type="text"][name="urls[LinkedIn]"], input[autocomplete="custom-question-linkedin-profile"], input[type="text"][data-automation-id="linkedinQuestion"], input[aria-label="LinkedIn Profile"], input[type="text"][name="linkedinUrl"], input[name="NQLvK1Rt9V"]',
     defaults.LinkedIn_url
   );
 
   // set website
   setInputValue(
-    'input[aria-label="Website"], input[type="text"][name="websiteUrl"]',
+    'input[aria-label="Website"], input[type="text"][name="websiteUrl"], input[name="VK5Ejth3u0"]',
     defaults.website
   );
 
@@ -273,7 +273,7 @@ function fillForm() {
 
   // set pronouns
   setInputValue(
-    'input[aria-label="What pronouns do you use?"]',
+    'input[aria-label="What pronouns do you use?"], input[name="upbRDOYe4w"]',
     defaults.pronouns
   );
 }
