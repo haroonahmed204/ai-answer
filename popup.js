@@ -152,19 +152,34 @@ function autoFillForm(data) {
   inputs.forEach((input) => {
     let labelText = "";
 
-    // Get associated label text
+    // Get associated label text from <label> elements
     if (input.id) {
-      const label = document.querySelector(`label[for="${input.id}"]`);
-      if (label) labelText = label.textContent;
+        const label = document.querySelector(`label[for="${input.id}"]`);
+        if (label) labelText = label.textContent;
     }
-    // Get placeholder if no label found
+
+    // If no label found, check for aria-labelledby
+    if (!labelText && input.hasAttribute('aria-labelledby')) {
+        const ariaLabelledbyIds = input.getAttribute('aria-labelledby').split(' ');
+        const labels = ariaLabelledbyIds.map(id => document.getElementById(id)).filter(label => label);
+        labelText = labels.map(label => label.textContent).join(' ');
+    }
+
+    // If still no label, check for aria-describedby
+    if (!labelText && input.hasAttribute('aria-describedby')) {
+        const ariaDescribedbyIds = input.getAttribute('aria-describedby').split(' ');
+        const descriptions = ariaDescribedbyIds.map(id => document.getElementById(id)).filter(desc => desc);
+        labelText += descriptions.map(desc => desc.textContent).join(' ');
+    }
+
+    // If still no label, check placeholder
     if (!labelText && input.placeholder) {
-      labelText = input.placeholder;
+        labelText = input.placeholder;
     }
 
     // Determine type and fill data
     for (const [key, pattern] of Object.entries(inputMappings)) {
-      if (pattern.test(labelText)) {
+      if (pattern.test(labelText) || pattern.test(input.name)) {
         input.value = data[key];
         input.dispatchEvent(new Event("input", { bubbles: true }));
         break;
