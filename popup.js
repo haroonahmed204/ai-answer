@@ -109,7 +109,7 @@ function fillForm() {
     pronouns: "He/him",
     authorization: "Yes",
     sponsorship: "No",
-    gender: "male",
+    gender: "Male",
     Are_you_Hispanic_or_Latino: "No",
     race: "asian",
     veteran_status: "No",
@@ -148,7 +148,7 @@ function fillForm() {
 
   // set first name
   setInputValue(
-    'input[type="text"][name="firstname"], input[type=text][name="job_application[first_name]"], input[type="text"][data-automation-id="legalNameSection_firstName"], input[aria-label="First Name"], input[name="firstName"], input[name="orV2-uLNL"], input[name="lxM5Vy11s"]',
+    'input[type="text"][name="firstname"], input[type=text][name="job_application[first_name]"], input[type="text"][data-automation-id="legalNameSection_firstName"], input[aria-label="First Name"], input[name="firstName"], input[name="orV2-uLNL"], input[name="lxM5Vy11s"], input[data-input="first_name"]',
     defaults.first_name
   );
 
@@ -160,13 +160,13 @@ function fillForm() {
 
   // set last name
   setInputValue(
-    'input[type="text"][name="lastname"], input[type=text][name="job_application[last_name]"], input[type="text"][data-automation-id="legalNameSection_lastName"], input[aria-label="Last Name"], input[name="lastName"], input[name="GTdQz2MZO3"], input[name="uBdtFTtnml"]',
+    'input[type="text"][name="lastname"], input[type=text][name="job_application[last_name]"], input[type="text"][data-automation-id="legalNameSection_lastName"], input[aria-label="Last Name"], input[name="lastName"], input[name="GTdQz2MZO3"], input[name="uBdtFTtnml"], input[data-input="last_name"]',
     defaults.last_name
   );
 
   // set email
   setInputValue(
-    'input[type="email"][name="email"], input[type="text"][autocomplete="email"], input[aria-label="Email"], input[name="vO84ELKo1D"], input[type="email"][name="_systemfield_email"]',
+    'input[type="email"][name="email"], input[type="text"][autocomplete="email"], input[aria-label="Email"], input[name="vO84ELKo1D"], input[type="email"][name="_systemfield_email"], input[data-input="email"]',
     defaults.email
   );
 
@@ -174,13 +174,13 @@ function fillForm() {
 
   // set phone
   setInputValue(
-    'input[type="text"][name="phone"], input[type="text"][autocomplete="tel"],input[type="tel"][name="phone"], input[type="text"][data-automation-id="phone-number"], input[aria-label="Phone"], input[name="phoneNumber"], input[name="jVE7d2VWz8"]',
+    'input[type="text"][name="phone"], input[type="text"][autocomplete="tel"],input[type="tel"][name="phone"], input[type="text"][data-automation-id="phone-number"], input[aria-label="Phone"], input[name="phoneNumber"], input[name="jVE7d2VWz8"], input[data-input="phone_number"]',
     defaults.phone
   );
 
   // set company
   setInputValue(
-    'input[type="text"][name="org"], input[type="text"][data-automation-id="company"], input[aria-label="Where have you most recently worked?"], input[name="J05B4qc7Lw"]',
+    'input[type="text"][name="org"], input[type="text"][data-automation-id="company"], input[aria-label="Where have you most recently worked?"], input[name="J05B4qc7Lw"], input[data-input="current_company"]',
     defaults.company
   );
 
@@ -204,13 +204,13 @@ function fillForm() {
 
   // set linkedin url
   setInputValue(
-    'input[type="text"][name="urls[LinkedIn]"], input[autocomplete="custom-question-linkedin-profile"], input[type="text"][data-automation-id="linkedinQuestion"], input[aria-label="LinkedIn Profile"], input[type="text"][name="linkedinUrl"], input[name="NQLvK1Rt9V"], input[type="text"][name="34238dbf-b35d-4302-9d78-bb1145ebafd9"]',
+    'input[type="text"][name="urls[LinkedIn]"], input[autocomplete="custom-question-linkedin-profile"], input[type="text"][data-automation-id="linkedinQuestion"], input[aria-label="LinkedIn Profile"], input[type="text"][name="linkedinUrl"], input[name="NQLvK1Rt9V"], input[type="text"][name="34238dbf-b35d-4302-9d78-bb1145ebafd9"], input[data-input="linkedin_link"]',
     defaults.LinkedIn_url
   );
 
   // set website
   setInputValue(
-    'input[aria-label="Website"], input[type="text"][name="websiteUrl"], input[name="VK5Ejth3u0"]',
+    'input[aria-label="Website"], input[type="text"][name="websiteUrl"], input[name="VK5Ejth3u0"], input[data-input="website_link"]',
     defaults.website
   );
 
@@ -240,7 +240,7 @@ function fillForm() {
 
   // set City
   setInputValue(
-    'input[type="text"][data-automation-id="addressSection_city"], input[name="location.unknownLocation"], input[name="q_f9b680442a593a9db0199438ba40f1fe"], input[id="candidate-location"]',
+    'input[type="text"][data-automation-id="addressSection_city"], input[name="location.unknownLocation"], input[name="q_f9b680442a593a9db0199438ba40f1fe"], input[id="candidate-location"], input[data-testid="input-location"]',
     defaults.city
   );
 
@@ -273,9 +273,17 @@ function fillForm() {
 
   // set pronouns
   setInputValue(
-    'input[aria-label="What pronouns do you use?"], input[name="upbRDOYe4w"]',
+    'input[aria-label="What pronouns do you use?"], input[data-input="select-search-input"]',
     defaults.pronouns
   );
+
+  // set gender
+  setInputValue(
+    'select[name="job_application[gender]"]', '1'
+  );
+
+
+
 }
 
 function fetchDataFromDatabase() {
