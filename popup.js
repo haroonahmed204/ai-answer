@@ -1,105 +1,191 @@
-const contentDiv = document.getElementById('content');
+document.addEventListener("DOMContentLoaded", function () {
+  let autoFillBtn = document.getElementById("autoFill");
 
-// Form load
-document.addEventListener('DOMContentLoaded', function () {
-    // Fetch the index.php content
-    fetch('http://localhost/ai-answer/index.php')
-        .then(response => response.text())
-        .then(data => {
-            // Insert the fetched content into the contentDiv
-            contentDiv.innerHTML = data;
-            contentDiv.classList.add('form-width');
+  // fetch autoFill button
+  autoFillBtn.addEventListener("click", async () => {
+    const data = {
+      fullName: "John Doe",
+      firstName: "John",
+      lastName: "Doe",
+      gender: "Male",
+      email: "john.doe@example.com",
+      phone: "(111) 111-1111",
+      preferredName: "John",
+      city: "New York",
+      state: "New York",
+      state_abv: "NY",
+      zipcode: "10325",
+      country: "United States",
+      countryAbv: "USA",
+      location: "New york, NY, USA",
+      address: "2393 Creekside Drive, Coplay, Pennsylvania, USA, 18037",
+      password: "SecurePassword123!",
+      linkedIn: "https://www.linkedin.com/in/john/",
+      website: "www.website.com",
+      cnicNumber: "12345-6789101-1",
+      dateOfBirth: "09-28-2024",
+      pronouns: "He/him",
+      authorization: "Yes",
+      sponsorship: "No",
+      race: "Asian",
+      veteran: "No",
+      diability: "No",
+      hearAboutUs: "Linkedin",
+      jobTitle: "Account Executive",
+      jobLocation: "New York",
+    };
 
-            // load users
-            loadAllUsers();
+    chrome.tabs.query(
+      { active: true, currentWindow: true },
+      async function (tabs) {
+        let activeTabId = tabs[0].id;
 
-            // Attach event listeners
-            attachEventListeners();
-        })
-        .catch(error => {
-            console.error('Error fetching PHP content:', error);
-            contentDiv.innerHTML = 'Failed to load content.';
+        // Execute the script in the active tab
+        await chrome.scripting.executeScript({
+          target: { tabId: activeTabId },
+          function: autoFillForm,
+          args: [data],
         });
+      }
+    );
+  });
 });
 
-// load users list
+async function autoFillForm(data) {
+  async function analyzeTextWithAI(text) {
+    const prompt = `
+    Analyze the following text and return only the corresponding key 
+    from the list below. Please provide only the key, without any additional 
+    text or explanation.
+    
+    Keys to consider: 
+    - fullName
+    - firstName
+    - lastName
+    - gender
+    - email
+    - phone
+    - preferredName
+    - city
+    - state
+    - zipcode
+    - country
+    - location
+    - address
+    - password
+    - linkedIn
+    - website
+    - cnicNumber
+    - dateOfBirth
+    - pronouns
+    - authorization
+    - sponsorship
+    - race
+    - veteran
+    - disability
+    - hearAboutUs
+    - jobTitle
+    - jobLocation
+    
+    Here is the text to analyze: "${text}"
+  `;
 
-function loadAllUsers() {
-    fetch('http://localhost/ai-answer/fetch_data.php')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Reference to the select element
-            const userSelect = document.getElementById('userSelect');
+    try {
+      const response = await fetch(
+        "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer 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`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            inputs: prompt,
+            parameters: { return_full_text: false },
+          }),
+        }
+      );
 
-            // Clear existing options
-            userSelect.innerHTML = '';
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
 
-            // Create an initial empty option
-            const emptyOption = document.createElement('option');
-            emptyOption.value = '';
-            emptyOption.textContent = 'Select a user';
-            userSelect.appendChild(emptyOption);
+      const data = await response.json();
 
-            // Loop through the data and create option elements
-            data.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.id;
-                option.textContent = user.name;
-                userSelect.appendChild(option);
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
-}
+      console.log(
+        "AI Response for the " + text + " is " + JSON.stringify(data, null, 2)
+      );
 
-// Function to attach event listeners
-function attachEventListeners() {
-    // get text button
-    document.getElementById('getText').addEventListener('click', function () {
-        console.log("Fetch text button clicked");
-    });
+      return data;
+    } catch (error) {
+      console.error("Failed to analyze text with AI:", error);
+      return null;
+    }
+  }
 
-    // fetch db button
-    document.getElementById('fetchDB').addEventListener('click', function () {
-        console.log("Fetch from database button clicked");
-        fetchDataFromDatabase();
-    });
-}
+  const inputs = document.querySelectorAll("input, select, textarea");
 
-function fetchDataFromDatabase() {
-    fetch('http://localhost/ai-answer/fetch_data.php')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json(); // Expecting JSON response
-        })
-        .then(data => {
-            displayData(data); // Call the function to display the data
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
-}
+  for (const input of inputs) {
+    console.log("Input: " + input);
 
-function displayData(data) {
-    const contentDiv = document.getElementById('users-list');
-    contentDiv.innerHTML = ''; // Clear previous content
+    let labelText = "";
 
-    if (data.length === 0) {
-        contentDiv.innerHTML = '<p>No data found.</p>';
-        return;
+    // Get associated label text from <label> elements
+    if (input.id) {
+      const label = document.querySelector(`label[for="${input.id}"]`);
+      if (label) labelText = label.textContent;
     }
 
-    data.forEach(item => {
-        const div = document.createElement('div');
-        div.textContent = JSON.stringify(item); // Customize how you want to display the data
-        contentDiv.appendChild(div);
-    });
+    // If no label found, check for aria-labelledby
+    if (!labelText && input.hasAttribute("aria-labelledby")) {
+      const ariaLabelledbyIds = input
+        .getAttribute("aria-labelledby")
+        .split(" ");
+      const labels = ariaLabelledbyIds
+        .map((id) => document.getElementById(id))
+        .filter((label) => label);
+      labelText = labels.map((label) => label.textContent).join(" ");
+    }
+
+    // If still no label, check for aria-describedby
+    if (!labelText && input.hasAttribute("aria-describedby")) {
+      const ariaDescribedbyIds = input
+        .getAttribute("aria-describedby")
+        .split(" ");
+      const descriptions = ariaDescribedbyIds
+        .map((id) => document.getElementById(id))
+        .filter((desc) => desc);
+      labelText += descriptions.map((desc) => desc.textContent).join(" ");
+    }
+
+    // If still no label, check placeholder
+    if (!labelText && input.placeholder) {
+      labelText = input.placeholder;
+    }
+
+    // Call the AI function to analyze the text
+    try {
+      console.log("Label text: " + labelText);
+      const aiResponse = await analyzeTextWithAI(labelText);
+      console.log("AI Response II:", aiResponse[0]?.generated_text);
+
+      // Extract key from AI response
+      const keyToFill = aiResponse[0]?.generated_text?.replace(/"/g, '').trim() || null;
+
+      console.log("Available keys in data:", Object.keys(data));
+      console.log("Extracted key to fill:", keyToFill);
+
+      if (keyToFill && data[keyToFill]) {
+        input.value = data[keyToFill];
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        console.log(
+          `Setting ${keyToFill} to ${data[keyToFill]} for input with label ${labelText}`
+        );
+      } else {
+        console.warn(`No valid key found for label: ${labelText}`);
+      }
+    } catch (error) {
+      console.error(`Failed to analyze text for label: ${labelText}`, error);
+    }
+  }
 }
