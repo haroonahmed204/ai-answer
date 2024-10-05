@@ -139,6 +139,16 @@ function autoFillForm(data) {
         input.checked = true;
         input.dispatchEvent(new Event("change", { bubbles: true }));
       }
+      else {
+        // Additional logic for radio buttons that do not match
+        if (radioName in data && data[radioName].toLowerCase() === "male") {
+          // Check if this radio button is for "Male"
+          if (input.value.toLowerCase() === "male") {
+            input.checked = true;
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        }
+      }
     } else if (input.type === "checkbox" && input.id === "privacyCheck") {
       // Handle the privacy checkbox
       if (!input.checked) {
