@@ -9,16 +9,17 @@ document.addEventListener("DOMContentLoaded", function () {
       lastName: "Doe",
       gender: "Male",
       email: "john.doe@example.com",
-      phone: "(111) 111-1111",
+      phone: "1111111111",
+      company: "Microsoft",
       preferredName: "John",
       city: "New York",
       state: "New York",
       state_abv: "NY",
       zipcode: "10325",
-      country: "United States",
+      country: "United States of America",
       countryAbv: "USA",
-      location: "New york, NY, USA",
-      Address: "2393 Creekside Drive, Coplay, Pennsylvania, USA, 18037",
+      location: "New York, NY, USA",
+      address: "2393 Creekside Drive",
       password: "SecurePassword123!",
       linkedIn: "https://www.linkedin.com/in/john/",
       website: "www.website.com",
@@ -27,10 +28,10 @@ document.addEventListener("DOMContentLoaded", function () {
       pronouns: "He/him",
       authorization: "Yes",
       sponsorship: "No",
-      race: "Asian",
-      veteran: "No",
-      diability: "No",
-      hearAboutUs: "Linkedin",
+      race: "White",
+      veteran: "Not",
+      disability: "No",
+      hearaboutus: "Linkedin",
       jobTitle: "Account Executive",
       jobLocation: "New York",
     };
@@ -59,6 +60,7 @@ function autoFillForm(data) {
     gender: /gender/i,
     email: /email/i,
     phone: /phone/i,
+    company: /(company|org|employer)/i,
     preferredName: /preferred[_ ]?name/i,
     city: /city/i,
     state: /state/i,
@@ -77,7 +79,7 @@ function autoFillForm(data) {
     race: /race/i,
     veteran: /veteran/i,
     disability: /disability/i,
-    hearAboutUs: /hear[_ ]?about[_ ]?us/i,
+    hearaboutus: /hear[_ ]?about[_ ]?us/i,
     jobTitle: /job[_ ]?title/i,
     jobLocation: /job[_ ]?location/i,
   };
@@ -89,35 +91,68 @@ function autoFillForm(data) {
 
     // Get associated label text from <label> elements
     if (input.id) {
-        const label = document.querySelector(`label[for="${input.id}"]`);
-        if (label) labelText = label.textContent;
+      const label = document.querySelector(`label[for="${input.id}"]`);
+      if (label) labelText = label.textContent;
     }
 
     // If no label found, check for aria-labelledby
-    if (!labelText && input.hasAttribute('aria-labelledby')) {
-        const ariaLabelledbyIds = input.getAttribute('aria-labelledby').split(' ');
-        const labels = ariaLabelledbyIds.map(id => document.getElementById(id)).filter(label => label);
-        labelText = labels.map(label => label.textContent).join(' ');
+    if (!labelText && input.hasAttribute("aria-labelledby")) {
+      const ariaLabelledbyIds = input
+        .getAttribute("aria-labelledby")
+        .split(" ");
+      const labels = ariaLabelledbyIds
+        .map((id) => document.getElementById(id))
+        .filter((label) => label);
+      labelText = labels.map((label) => label.textContent).join(" ");
     }
 
     // If still no label, check for aria-describedby
-    if (!labelText && input.hasAttribute('aria-describedby')) {
-        const ariaDescribedbyIds = input.getAttribute('aria-describedby').split(' ');
-        const descriptions = ariaDescribedbyIds.map(id => document.getElementById(id)).filter(desc => desc);
-        labelText += descriptions.map(desc => desc.textContent).join(' ');
+    if (!labelText && input.hasAttribute("aria-describedby")) {
+      const ariaDescribedbyIds = input
+        .getAttribute("aria-describedby")
+        .split(" ");
+      const descriptions = ariaDescribedbyIds
+        .map((id) => document.getElementById(id))
+        .filter((desc) => desc);
+      labelText += descriptions.map((desc) => desc.textContent).join(" ");
     }
 
     // If still no label, check placeholder
     if (!labelText && input.placeholder) {
-        labelText = input.placeholder;
+      labelText = input.placeholder;
     }
 
-    // Determine type and fill data
-    for (const [key, pattern] of Object.entries(inputMappings)) {
-      if (pattern.test(labelText) || pattern.test(input.name)) {
-        input.value = data[key];
-        input.dispatchEvent(new Event("input", { bubbles: true }));
-        break;
+    // Handle the "Location" autocomplete input with aria-describedby
+    if (input.getAttribute("aria-describedby") === "location-description") {
+      input.focus();  // Focus on the input
+      input.value = data.location;  // Set the value
+
+      // Simulate typing by dispatching keyboard events
+      const events = ["input", "keydown", "keyup", "change"];
+      events.forEach(eventType => {
+        input.dispatchEvent(new KeyboardEvent(eventType, { bubbles: true, cancelable: true, key: "a" }));
+      });
+    } else if (input.type === "radio") {
+      // Handle radio buttons
+      const radioName = input.name;
+      if (radioName in data && input.value.toLowerCase() === data[radioName].toLowerCase()) {
+        input.checked = true;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    } else if (input.type === "checkbox" && input.id === "privacyCheck") {
+      // Handle the privacy checkbox
+      if (!input.checked) {
+        input.click();  // Click to check the checkbox
+      }
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    } else {
+      // Handle other inputs using label or placeholder
+      for (const [key, pattern] of Object.entries(inputMappings)) {
+        if (pattern.test(labelText) || pattern.test(input.name)) {
+          input.value = data[key];
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          break;
+        }
       }
     }
   });
