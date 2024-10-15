@@ -1,6 +1,6 @@
 from huggingface_hub import InferenceClient
 
-client = InferenceClient(api_key="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")
+client = InferenceClient(api_key="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")
 
 for message in client.chat_completion(
 	model="mistralai/Mistral-7B-Instruct-v0.3",
