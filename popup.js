@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
       address: "2393 Creekside Drive, Coplay, Pennsylvania, USA, 18037",
       password: "SecurePassword123!",
       linkedIn: "https://www.linkedin.com/in/john/",
-      website: "www.website.com",
+      website_link: "www.website.com",
       dateOfBirth: "09-28-2024",
       pronouns: "He/him",
       authorization: "Yes",
@@ -33,7 +33,9 @@ document.addEventListener("DOMContentLoaded", function () {
       jobTitle: "Account Executive",
       jobLocation: "New York",
       desiredwage:"50000",
-
+      company:"Abc",
+      resume: `Highly motivated and experienced Senior Full Stack Developer with 15+ years of hands-on experience in web development using React.js and frontend development with .NET Core/C#. Possessing a solid foundation in programming fundamentals acquired through a Bachelor's degree in Computer Science. Excels in collaborative team environments, having successfully delivered multiple projects from conception to deployment. Demonstrating adaptability and a proactive approach to learning new technologies. Actively contributed to the adoption of best practices and innovative solutions within development teams. 
+`,
 //       resume: `
 // Lucas Ellis   	 Lucas.Ellis24@outlook.com  •  (720) 204-3110
 // Portfolio • LinkedIn • Norman, OK
@@ -147,7 +149,7 @@ async function autoFillForm(data) {
     - address
     - password
     - linkedIn
-    - website
+    - website_link
     - dateOfBirth
     - pronouns
     - authorization
@@ -159,6 +161,7 @@ async function autoFillForm(data) {
     - jobTitle
     - jobLocation
     - desiredwage
+    - company
     Here is the text to analyze: "${text}"
   `;
 
@@ -249,6 +252,7 @@ async function autoFillForm(data) {
       console.log("Extracted key to fill:", keyToFill);
 
       if (keyToFill && data[keyToFill]) {
+        
         input.value = data[keyToFill];
         input.dispatchEvent(new Event("input", { bubbles: true }));
         console.log(
