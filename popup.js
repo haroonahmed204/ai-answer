@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
         location: "New York, NY",
         startDate: "January 2020",
         endDate: "Present",
+        Pronouns: "She/her/hers",
+        race: "Asian",
         description: "Developed web applications using React and Node.js."
       }
     ],
@@ -113,18 +115,34 @@ async function autoFillForm(resumeData) {
     }
 
     if (labelText) {
-      // console.log(`Analyzing custom question: ${labelText}`);
+      console.log(`Analyzing custom question: ${labelText}`);
 
       // Use AI to analyze the custom question and get a response
       try {
         const aiResponse = await analyzeTextWithAI(labelText);
-        // console.log(`AI Generated Response: ${aiResponse}`);
+        console.log(`AI Generated Response: ${aiResponse}`);
 
         // Set the input value based on the AI response
-        if (aiResponse) {
-          input.value = aiResponse;
-          input.dispatchEvent(new Event("input", { bubbles: true }));
-          // console.log(`Filled '${labelText}' with: ${aiResponse}`);
+        if (input.type === 'radio') {
+            // Assuming the AI response directly corresponds to the value of the radio button
+            const radioButton = document.querySelector(`input[type="radio"][value="${aiResponse}"]`);
+            if (radioButton) {
+                radioButton.checked = true; // Check the radio button
+                radioButton.dispatchEvent(new Event("change", { bubbles: true })); // Trigger change event
+                console.log(`Selected radio button with value: ${aiResponse}`);
+            } else {
+                console.warn(`No matching radio button for value: ${aiResponse}`);
+            }
+        }else if (input.type === 'checkbox') {
+          // Assuming aiResponse is a boolean indicating whether to check or uncheck the box
+          const shouldCheck = aiResponse.toLowerCase() === "true"; // Adjust based on how your AI response is structured
+          input.checked = shouldCheck; // Check or uncheck the checkbox
+          input.dispatchEvent(new Event("change", { bubbles: true })); // Trigger change event
+          console.log(`Checkbox ${input.id} is now ${shouldCheck ? 'checked' : 'unchecked'}`);
+      }else if (aiResponse) {
+            input.value = aiResponse;
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+            console.log(`Filled '${labelText}' with: ${aiResponse}`);
         } else {
           console.warn(`No AI response for label: ${labelText}`);
         }
