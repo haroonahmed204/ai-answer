@@ -9,9 +9,10 @@ document.addEventListener("DOMContentLoaded", function () {
     password: "pakistan11",
     phone: "7083635912",
     preferredName: "John",
+    Address_Line_1: '870 W 181st',
     city: "New York",
-    state: "New York",
-    zipcode: "10325",
+    state: "NY",
+    zipcode: "10033",
     country: "United States",
     linked_In_profile: "https://www.linkedin.com/in/john-doe-97044611/",
     website: "https://www.website.com/in/john-doe/",
@@ -24,11 +25,30 @@ document.addEventListener("DOMContentLoaded", function () {
     hearAboutUs: "Linkedin",
     company: "Candidateside",
     Title: "Frontend Developer",
-    workExperience: [{}],
+    // workExperience_1: [{
+    //   'jobTitle': 'Frontend Developer',
+    //   'company': 'Candidateside',
+    //   'location': 'New York, NY',
+    //   'from': '09/2023',
+    //   'to': '10/2024',
+    //   'role description': `lsdhfljdskhflkjds
+    //   asdkhgfkahdsfkadshbvfkhadbsfkhadskfhbadskfhbbewdg owyegouiy3e07 2 uqwgoyt 32087 
+    //   asdh gq96rt327 qgwdoubiQTF78 DOqgwdo  qtwy d0`,
+    // }],
+    // workExperience_2: [{
+    //   'jobTitle': 'consultant',
+    //   'company': 'Candidateside',
+    //   'location': 'New York, NY',
+    //   'from': '09/2021',
+    //   'to': '10/2023',
+    //   'role description': `lsdhfljdskhflkjds
+    //   asdkhgfkahdsfkadshbvfkhadbsfkhadskfhbadskfhbbewdg owyegouiy3e07 2 uqwgoyt 32087 
+    //   asdh gq96rt327 qgwdoubiQTF78 DOqgwdo  qtwy d0`,
+    // }],
     skills: ["JavaScript", "Python", "React", "Node.js"],
     education: {
       degree: "Bachelor of Science in Computer Science",
-      school: "XYZ",
+      university: 'Mirpur University',
       graduationYear: "2019",
     },
     certifications: ["AWS Certified Developer"],
