@@ -3,26 +3,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Sample resume data (you can replace it with dynamically loaded data)
   const resumeData = {
-    fullName: "John Doe",
+    fisrtname: "John",
+    lastname: "Doe",
     email: "john.doe@example.com",
-    phone: "(123) 456-7890",
-    linked_in_profile: 'https://www.linkedin.com/in/jennifer-saylor-97044611/',
-    website: 'https://www.website.com/in/jennifer-saylor/',
-    workExperience: [
-      {
-        jobTitle: "Software Engineer",
-        company: "ABC Corp",
-        location: "New York, NY",
-        startDate: "January 2020",
-        endDate: "Present",
-        description: "Developed web applications using React and Node.js."
-      }
-    ],
+    password: "pakistan11",
+    phone: "7083635912",
+    preferredName: "John",
+    city: "New York",
+    state: "New York",
+    zipcode: "10325",
+    country: "United States",
+    linked_In_profile: "https://www.linkedin.com/in/john-doe-97044611/",
+    website: "https://www.website.com/in/john-doe/",
+    pronouns: "He/Him",
+    authorization: "Yes",
+    sponsorship: "No",
+    race: "white",
+    veteran: "No",
+    diability: "No",
+    hearAboutUs: "Linkedin",
+    company: "Candidateside",
+    Title: "Frontend Developer",
+    workExperience: [{}],
     skills: ["JavaScript", "Python", "React", "Node.js"],
     education: {
       degree: "Bachelor of Science in Computer Science",
-      school: "XYZ University",
-      graduationYear: "2019"
+      school: "XYZ",
+      graduationYear: "2019",
     },
     certifications: ["AWS Certified Developer"],
     languages: ["English", "Spanish"],
@@ -51,20 +58,20 @@ async function autoFillForm(resumeData) {
   // Function to analyze the text of a question using AI
   async function analyzeTextWithAI(text) {
     const prompt = `
-      Based on the following question text, provide an appropriate answer using the provided resume data:
+      Based on the following question text, provide only the answer using the provided resume data. 
+      Do not include the question, explanations, or any additional text.
 
       Question: "${text}"
       Resume Data: ${JSON.stringify(resumeData)}
-      Give only the Answer in the response and dont give explanations of the answer.
     `;
 
     try {
       const response = await fetch(
-        "https://api-inference.huggingface.co/models/meta-llama/Llama-3.2-3B-Instruct",
+        "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer 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`,
+            Authorization: `Bearer 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`, //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
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -80,7 +87,11 @@ async function autoFillForm(resumeData) {
 
       const data = await response.json();
       const generatedText = data[0]?.generated_text || null;
-      const cleanData = generatedText.replace(/Answer:/gi, '').replace(/[""]/g, '').split("Note:")[0].trim();
+      const cleanData = generatedText
+        .replace(/Answer:/gi, "")
+        .replace(/[""]/g, "")
+        .split("Note:")[0]
+        .trim();
       return cleanData;
     } catch (error) {
       console.error("AI analysis failed:", error);
@@ -102,34 +113,46 @@ async function autoFillForm(resumeData) {
 
     // Check for aria-labelledby
     if (!labelText && input.hasAttribute("aria-labelledby")) {
-      const ariaLabelledbyIds = input.getAttribute("aria-labelledby").split(" ");
-      const labels = ariaLabelledbyIds.map(id => document.getElementById(id)).filter(label => label);
-      labelText = labels.map(label => label.textContent).join(" ");
+      const ariaLabelledbyIds = input
+        .getAttribute("aria-labelledby")
+        .split(" ");
+      const labels = ariaLabelledbyIds
+        .map((id) => document.getElementById(id))
+        .filter((label) => label);
+      labelText = labels.map((label) => label.textContent).join(" ");
     }
 
-    // Check placeholder as a fallback
+    // Check placeholder
     if (!labelText && input.placeholder) {
       labelText = input.placeholder;
     }
 
+    // Check name
+    if (!labelText && input.name) {
+      labelText = input.name;
+    }
+
     if (labelText) {
-      // console.log(`Analyzing custom question: ${labelText}`);
+      console.log(`Analyzing custom question: ${labelText}`);
 
       // Use AI to analyze the custom question and get a response
       try {
         const aiResponse = await analyzeTextWithAI(labelText);
-        // console.log(`AI Generated Response: ${aiResponse}`);
+        console.log(`AI Generated Response: ${aiResponse}`);
 
         // Set the input value based on the AI response
         if (aiResponse) {
           input.value = aiResponse;
           input.dispatchEvent(new Event("input", { bubbles: true }));
-          // console.log(`Filled '${labelText}' with: ${aiResponse}`);
+          console.log(`Filled '${labelText}' with: ${aiResponse}`);
         } else {
           console.warn(`No AI response for label: ${labelText}`);
         }
       } catch (error) {
-        console.error(`Failed to generate response for label: ${labelText}`, error);
+        console.error(
+          `Failed to generate response for label: ${labelText}`,
+          error
+        );
       }
     }
   }
