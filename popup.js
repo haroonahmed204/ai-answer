@@ -22,6 +22,9 @@ document.addEventListener("DOMContentLoaded", function () {
     race: "white",
     veteran: "No",
     diability: "No",
+    authorized: 'yes',
+    sponsorship: "No",
+    US_residence: 'Yes', 
     hearAboutUs: "Linkedin",
     company: "Candidateside",
     Title: "Frontend Developer",
@@ -73,80 +76,80 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Main autofill function
 async function autoFillForm(resumeData) {
-  // Analyze text with OpenAI
-  async function analyzeTextWithAI(text) {
-    const apiKey = "paste-key-here";
-
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: "You are a helpful assistant." },
-          { role: "user", content: `
-      Give only the precise answer according to asked question using the provided resume data. 
-      Do not include the answer explanations, or any additional text.
-
-      Question: "${text}"
-      Resume Data: ${JSON.stringify(resumeData)}
-    ` },
-        ],
-      }),
-    });
-
-    const data = await response.json();
-    console.log("Open AI Response: " + data.choices[0].message.content);
-
-    return data.choices[0].message.content;
-  }
-
-  // Analyze text with Hugging Face
+  // // Analyze text with OpenAI
   // async function analyzeTextWithAI(text) {
-  //   const prompt = `
+  //   const apiKey = "paste-key-here";
+
+  //   const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${apiKey}`,
+  //     },
+  //     body: JSON.stringify({
+  //       model: "gpt-4o-mini",
+  //       messages: [
+  //         { role: "system", content: "You are a helpful assistant." },
+  //         { role: "user", content: `
   //     Give only the precise answer according to asked question using the provided resume data. 
   //     Do not include the answer explanations, or any additional text.
 
   //     Question: "${text}"
   //     Resume Data: ${JSON.stringify(resumeData)}
-  //   `;
+  //   ` },
+  //       ],
+  //     }),
+  //   });
 
-  //   try {
-  //     const response = await fetch(
-  //       "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           Authorization: `Bearer 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`, //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
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           inputs: prompt,
-  //           parameters: { return_full_text: false },
-  //         }),
-  //       }
-  //     );
+  //   const data = await response.json();
+  //   console.log("Open AI Response: " + data.choices[0].message.content);
 
-  //     if (!response.ok) {
-  //       throw new Error(`Error: ${response.status} - ${response.statusText}`);
-  //     }
-
-  //     const data = await response.json();
-  //     const generatedText = data[0]?.generated_text || null;
-  //     const cleanData = generatedText
-  //       .replace(/Answer:/gi, "")
-  //       .replace(/[""]/g, "")
-  //       .split("Note:")[0]
-  //       .trim();
-  //     return cleanData;
-  //   } catch (error) {
-  //     console.error("AI analysis failed:", error);
-  //     return null;
-  //   }
+  //   return data.choices[0].message.content;
   // }
+
+  // Analyze text with Hugging Face
+  async function analyzeTextWithAI(text) {
+    const prompt = `
+      Give only the precise answer according to asked question using the provided resume data. 
+      Do not include the answer explanations, or any additional text.
+
+      Question: "${text}"
+      Resume Data: ${JSON.stringify(resumeData)}
+    `;
+
+    try {
+      const response = await fetch(
+        "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer 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`, //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
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            inputs: prompt,
+            parameters: { return_full_text: false },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const generatedText = data[0]?.generated_text || null;
+      const cleanData = generatedText
+        .replace(/Answer:/gi, "")
+        .replace(/[""]/g, "")
+        .split("Note:")[0]
+        .trim();
+      return cleanData;
+    } catch (error) {
+      console.error("AI analysis failed:", error);
+      return null;
+    }
+  }
 
   // Query all input fields
   const inputs = document.querySelectorAll("input, select, textarea");
@@ -189,11 +192,44 @@ async function autoFillForm(resumeData) {
         const aiResponse = await analyzeTextWithAI(labelText);
         console.log(`AI Generated Response: ${aiResponse}`);
 
-        // Set the input value based on the AI response
+        // Set the input value based on the AI response and input type
         if (aiResponse) {
-          input.value = aiResponse;
-          input.dispatchEvent(new Event("input", { bubbles: true }));
-          console.log(`Filled '${labelText}' with: ${aiResponse}`);
+          if (input.type === "radio") {
+            // Find the corresponding radio button
+            const radioButtons = document.getElementsByName(input.name);
+            radioButtons.forEach((button) => {
+              if (button.value === aiResponse) {
+                button.checked = true;
+                button.dispatchEvent(new Event("change", { bubbles: true }));
+                console.log(`Filled '${labelText}' with: ${aiResponse}`);
+              }
+            });
+          } else if (input.type === "checkbox") {
+            // Check/uncheck the checkbox
+            if (aiResponse.toLowerCase() === "yes" || aiResponse === "true") {
+              input.checked = true;
+            } else {
+              input.checked = false;
+            }
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+            console.log(`Filled '${labelText}' with: ${aiResponse}`);
+          } else if (input.tagName === "SELECT") {
+            // Select the corresponding option
+            const options = input.options;
+            for (let i = 0; i < options.length; i++) {
+              if (options[i].value === aiResponse) {
+                input.selectedIndex = i;
+                input.dispatchEvent(new Event("change", { bubbles: true }));
+                console.log(`Filled '${labelText}' with: ${aiResponse}`);
+                break;
+              }
+            }
+          } else {
+            // Default to text input
+            input.value = aiResponse;
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+            console.log(`Filled '${labelText}' with: ${aiResponse}`);
+          }
         } else {
           console.warn(`No AI response for label: ${labelText}`);
         }
