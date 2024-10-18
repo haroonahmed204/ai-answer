@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     linked_In_profile: "https://www.linkedin.com/in/john-doe-97044611/",
     website: "https://www.website.com/in/john-doe/",
     pronouns: "He/Him",
+    age: '29',
     authorization: "Yes",
     sponsorship: "No",
     race: "white",
@@ -75,40 +76,30 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // Main autofill function
+// Main autofill function
 async function autoFillForm(resumeData) {
-  // // Analyze text with OpenAI
-  // async function analyzeTextWithAI(text) {
-  //   const apiKey = "paste-key-here";
+  // List of available Hugging Face tokens
+  const tokens = [
+    "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",
+    "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",
+    "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",
+    "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",
+    "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",
+    "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",
+    "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",
+    "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",
+    // Add more tokens here if needed
+  ];
 
-  //   const response = await fetch("https://api.openai.com/v1/chat/completions", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${apiKey}`,
-  //     },
-  //     body: JSON.stringify({
-  //       model: "gpt-4o-mini",
-  //       messages: [
-  //         { role: "system", content: "You are a helpful assistant." },
-  //         { role: "user", content: `
-  //     Give only the precise answer according to asked question using the provided resume data. 
-  //     Do not include the answer explanations, or any additional text.
+  let currentTokenIndex = 0;
+  // Function to switch tokens when one is exhausted
+  function getNextToken() {
+    currentTokenIndex = (currentTokenIndex + 1) % tokens.length;
+    return tokens[currentTokenIndex];
+  }
 
-  //     Question: "${text}"
-  //     Resume Data: ${JSON.stringify(resumeData)}
-  //   ` },
-  //       ],
-  //     }),
-  //   });
-
-  //   const data = await response.json();
-  //   console.log("Open AI Response: " + data.choices[0].message.content);
-
-  //   return data.choices[0].message.content;
-  // }
-
-  // Analyze text with Hugging Face
-  async function analyzeTextWithAI(text) {
+  // Analyze text with Hugging Face, switch tokens if "Too many requests" error occurs
+  async function analyzeTextWithAI(text, retries = tokens.length) {
     const prompt = `
       Give only the precise answer according to asked question using the provided resume data. 
       Do not include the answer explanations, or any additional text.
@@ -123,7 +114,7 @@ async function autoFillForm(resumeData) {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer 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`, //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
+            Authorization: `Bearer ${tokens[currentTokenIndex]}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -132,6 +123,13 @@ async function autoFillForm(resumeData) {
           }),
         }
       );
+
+      if (response.status === 429 && retries > 0) {
+        // "Too many requests" error, switch to next token
+        console.warn(`Token limit reached, switching token...`);
+        getNextToken();
+        return analyzeTextWithAI(text, retries - 1);
+      }
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status} - ${response.statusText}`);
@@ -174,13 +172,17 @@ async function autoFillForm(resumeData) {
       labelText = labels.map((label) => label.textContent).join(" ");
     }
 
-    // Check placeholder
-    if (!labelText && input.placeholder) {
-      labelText = input.placeholder;
-    }
+    // // Check placeholder
+    // if (!labelText && input.placeholder) {
+    //   labelText = input.placeholder;
+    // }
 
     // Check name
     if (!labelText && input.name) {
+      labelText = input.name;
+    }
+    // Check name
+    if (!labelText && input.value) {
       labelText = input.name;
     }
 
