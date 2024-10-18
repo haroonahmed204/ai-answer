@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
 async function autoFillForm(resumeData) {
   // Analyze text with OpenAI
   async function analyzeTextWithAI(text) {
-    const apiKey = "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";
+    const apiKey = "paste-key-here";
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
