@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     password: "pakistan11",
     phone: "7083635912",
     preferredName: "John",
-    Address_Line_1: '870 W 181st',
+    Address_Line_1: "870 W 181st",
     city: "New York",
     state: "NY",
     zipcode: "10033",
@@ -25,30 +25,28 @@ document.addEventListener("DOMContentLoaded", function () {
     hearAboutUs: "Linkedin",
     company: "Candidateside",
     Title: "Frontend Developer",
-    // workExperience_1: [{
-    //   'jobTitle': 'Frontend Developer',
-    //   'company': 'Candidateside',
-    //   'location': 'New York, NY',
-    //   'from': '09/2023',
-    //   'to': '10/2024',
-    //   'role description': `lsdhfljdskhflkjds
-    //   asdkhgfkahdsfkadshbvfkhadbsfkhadskfhbadskfhbbewdg owyegouiy3e07 2 uqwgoyt 32087 
-    //   asdh gq96rt327 qgwdoubiQTF78 DOqgwdo  qtwy d0`,
+    // workExperience: [{
+    //   // 'jobTitle': 'Frontend Developer',
+    //   // 'company': 'Candidateside',
+    //   // 'location': 'New York, NY',
+    //   // 'from': '09/2023',
+    //   // 'to': '10/2024',
+    //   'role description': `i am frontend engineer and i have 10 years of experience in frontend development.`,
     // }],
-    // workExperience_2: [{
-    //   'jobTitle': 'consultant',
-    //   'company': 'Candidateside',
-    //   'location': 'New York, NY',
-    //   'from': '09/2021',
-    //   'to': '10/2023',
-    //   'role description': `lsdhfljdskhflkjds
-    //   asdkhgfkahdsfkadshbvfkhadbsfkhadskfhbadskfhbbewdg owyegouiy3e07 2 uqwgoyt 32087 
-    //   asdh gq96rt327 qgwdoubiQTF78 DOqgwdo  qtwy d0`,
-    // }],
+    // // workExperience_2: [{
+    // //   'jobTitle': 'consultant',
+    // //   'company': 'Candidate',
+    // //   'location': 'Nyack, NY',
+    // //   'from': '09/2021',
+    // //   'to': '10/2023',
+    // //   'role description': `lsdhfljdskhflkjds
+    // //   asdkhgfkahdsfkadshbvfkhadbsfkhadskfhbadskfhbbewdg owyegouiy3e07 2 uqwgoyt 32087
+    // //   asdh gq96rt327 qgwdoubiQTF78 DOqgwdo  qtwy d0`,
+    // // }],
     skills: ["JavaScript", "Python", "React", "Node.js"],
     education: {
       degree: "Bachelor of Science in Computer Science",
-      university: 'Mirpur University',
+      university: "Mirpur University",
       graduationYear: "2019",
     },
     certifications: ["AWS Certified Developer"],
@@ -75,49 +73,80 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Main autofill function
 async function autoFillForm(resumeData) {
-  // Function to analyze the text of a question using AI
+  // Analyze text with OpenAI
   async function analyzeTextWithAI(text) {
-    const prompt = `
-      Based on the following question text, provide only the answer using the provided resume data. 
-      Do not include the question, explanations, or any additional text.
+    const apiKey = "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";
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: "You are a helpful assistant." },
+          { role: "user", content: `
+      Give only the precise answer according to asked question using the provided resume data. 
+      Do not include the answer explanations, or any additional text.
 
       Question: "${text}"
       Resume Data: ${JSON.stringify(resumeData)}
-    `;
+    ` },
+        ],
+      }),
+    });
 
-    try {
-      const response = await fetch(
-        "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer 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`, //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
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            inputs: prompt,
-            parameters: { return_full_text: false },
-          }),
-        }
-      );
+    const data = await response.json();
+    console.log("Open AI Response: " + data.choices[0].message.content);
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} - ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      const generatedText = data[0]?.generated_text || null;
-      const cleanData = generatedText
-        .replace(/Answer:/gi, "")
-        .replace(/[""]/g, "")
-        .split("Note:")[0]
-        .trim();
-      return cleanData;
-    } catch (error) {
-      console.error("AI analysis failed:", error);
-      return null;
-    }
+    return data.choices[0].message.content;
   }
+
+  // Analyze text with Hugging Face
+  // async function analyzeTextWithAI(text) {
+  //   const prompt = `
+  //     Give only the precise answer according to asked question using the provided resume data. 
+  //     Do not include the answer explanations, or any additional text.
+
+  //     Question: "${text}"
+  //     Resume Data: ${JSON.stringify(resumeData)}
+  //   `;
+
+  //   try {
+  //     const response = await fetch(
+  //       "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           Authorization: `Bearer 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`, //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
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           inputs: prompt,
+  //           parameters: { return_full_text: false },
+  //         }),
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error(`Error: ${response.status} - ${response.statusText}`);
+  //     }
+
+  //     const data = await response.json();
+  //     const generatedText = data[0]?.generated_text || null;
+  //     const cleanData = generatedText
+  //       .replace(/Answer:/gi, "")
+  //       .replace(/[""]/g, "")
+  //       .split("Note:")[0]
+  //       .trim();
+  //     return cleanData;
+  //   } catch (error) {
+  //     console.error("AI analysis failed:", error);
+  //     return null;
+  //   }
+  // }
 
   // Query all input fields
   const inputs = document.querySelectorAll("input, select, textarea");
