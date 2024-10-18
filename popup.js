@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     authorized: 'yes',
     sponsorship: "No",
     US_residence: 'Yes', 
+    salary: '100000',
     hearAboutUs: "Linkedin",
     company: "Candidateside",
     Title: "Frontend Developer",
@@ -88,7 +89,6 @@ async function autoFillForm(resumeData) {
     "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",
     "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",
     "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",
-    // Add more tokens here if needed
   ];
 
   let currentTokenIndex = 0;
@@ -149,43 +149,73 @@ async function autoFillForm(resumeData) {
     }
   }
 
-  // Query all input fields
-  const inputs = document.querySelectorAll("input, select, textarea");
+  // Query all input fields and custom question containers
+const inputs = document.querySelectorAll("input, textarea, .application-question.custom-question");
 
-  for (const input of inputs) {
+for (let i = 0; i < inputs.length; i++) {
+    const input = inputs[i];
     let labelText = "";
 
-    // Try to get the associated label text
-    if (input.id) {
-      const label = document.querySelector(`label[for="${input.id}"]`);
-      if (label) labelText = label.textContent;
+    // Skip label extraction for specific input types
+    if (input.type === "radio" || input.type === "checkbox" || input.type === "hidden" || input.tagName.toLowerCase() === "select") {
+        continue; // Skip to the next iteration
     }
 
-    // Check for aria-labelledby
-    if (!labelText && input.hasAttribute("aria-labelledby")) {
-      const ariaLabelledbyIds = input
-        .getAttribute("aria-labelledby")
-        .split(" ");
-      const labels = ariaLabelledbyIds
-        .map((id) => document.getElementById(id))
-        .filter((label) => label);
-      labelText = labels.map((label) => label.textContent).join(" ");
-    }
+    // Check if input is part of a custom question
+    const customQuestion = input.closest(".application-question.custom-question");
 
-    // // Check placeholder
-    // if (!labelText && input.placeholder) {
-    //   labelText = input.placeholder;
-    // }
+    if (customQuestion) {
+        // Extract label text from custom question
+        const textElement = customQuestion.querySelector(".application-label .text");
+        if (textElement) {
+            labelText = textElement.textContent.replace(/✱/g, '').trim(); // Remove any required markers
+        }
 
-    // Check name
-    if (!labelText && input.name) {
-      labelText = input.name;
-    }
-    // Check name
-    if (!labelText && input.value) {
-      labelText = input.name;
-    }
+        if (labelText) {
+            console.log(`Analyzing custom question: ${labelText}`);
 
+            // Use AI to analyze the custom question and get a response
+            try {
+                const aiResponse = await analyzeTextWithAI(labelText);
+                console.log(`AI Generated Response: ${aiResponse}`);
+
+                // Check if AI response exists
+                if (aiResponse) {
+                    // Ensure the AI response is applied to the correct textarea for custom questions
+                    const textarea = customQuestion.querySelector("textarea");
+                    if (textarea) {
+                        textarea.value = aiResponse; // Fill the textarea with AI response
+                        textarea.dispatchEvent(new Event("input", { bubbles: true })); // Dispatch input event for the textarea
+                        console.log(`Filled custom question '${labelText}' with: ${aiResponse}`);
+
+                        // Skip this textarea in future iterations by breaking the loop
+                        i = [...inputs].indexOf(textarea); // Adjust the loop to skip this textarea
+                    }
+                }
+            } catch (error) {
+                console.error(`Failed to generate response for custom question: ${labelText}`, error);
+            }
+        }
+    } else {
+        // This is a general input (not part of custom question)
+        // Try to get the associated label text from a <label> tag
+        if (input.id) {
+            const label = document.querySelector(`label[for="${input.id}"]`);
+            if (label) labelText = label.textContent;
+        }
+
+        // Check for aria-labelledby attribute
+        if (!labelText && input.hasAttribute("aria-labelledby")) {
+            const ariaLabelledbyIds = input.getAttribute("aria-labelledby").split(" ");
+            const labels = ariaLabelledbyIds.map((id) => document.getElementById(id)).filter((label) => label);
+            labelText = labels.map((label) => label.textContent).join(" ");
+        }
+
+        // Check for name attribute as a last resort
+        if (!labelText && input.name) {
+            labelText = input.name;
+        }
+      }
     if (labelText) {
       console.log(`Analyzing custom question: ${labelText}`);
 
@@ -194,45 +224,21 @@ async function autoFillForm(resumeData) {
         const aiResponse = await analyzeTextWithAI(labelText);
         console.log(`AI Generated Response: ${aiResponse}`);
 
-        // Set the input value based on the AI response and input type
+         // Check if there is a response
         if (aiResponse) {
-          if (input.type === "radio") {
-            // Find the corresponding radio button
-            const radioButtons = document.getElementsByName(input.name);
-            radioButtons.forEach((button) => {
-              if (button.value === aiResponse) {
-                button.checked = true;
-                button.dispatchEvent(new Event("change", { bubbles: true }));
-                console.log(`Filled '${labelText}' with: ${aiResponse}`);
-              }
-            });
-          } else if (input.type === "checkbox") {
-            // Check/uncheck the checkbox
-            if (aiResponse.toLowerCase() === "yes" || aiResponse === "true") {
-              input.checked = true;
-            } else {
-              input.checked = false;
-            }
-            input.dispatchEvent(new Event("change", { bubbles: true }));
+          // Check if the input is a textarea (for custom questions)
+          if (input.tagName.toLowerCase() === "textarea") {
+            input.value = aiResponse; // Set the textarea value
+            input.dispatchEvent(new Event("input", { bubbles: true })); // Dispatch input event for the textarea
             console.log(`Filled '${labelText}' with: ${aiResponse}`);
-          } else if (input.tagName === "SELECT") {
-            // Select the corresponding option
-            const options = input.options;
-            for (let i = 0; i < options.length; i++) {
-              if (options[i].value === aiResponse) {
-                input.selectedIndex = i;
-                input.dispatchEvent(new Event("change", { bubbles: true }));
-                console.log(`Filled '${labelText}' with: ${aiResponse}`);
-                break;
-              }
-            }
-          } else {
-            // Default to text input
-            input.value = aiResponse;
+        } else if (input.type === "text") {
+            // Additionally handle standard text input types
+            input.value = aiResponse; // Set the input value
             input.dispatchEvent(new Event("input", { bubbles: true }));
             console.log(`Filled '${labelText}' with: ${aiResponse}`);
-          }
-        } else {
+        }      
+        }   
+        else {
           console.warn(`No AI response for label: ${labelText}`);
         }
       } catch (error) {
